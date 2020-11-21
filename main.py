@@ -3,26 +3,43 @@ from sudoku import *
 
 class PuzzleManager():
     def __init__(self, sudoku):
-        self.Sudoku = sudoku
-        self.assignement = None #this is a dictionary of all of the variables (h,w) that have been assigned (initially just filled with pre-set numbers)
+        self.sudoku = sudoku
+        self.domains = {(variable.h, variable.w): variable.domain for variable in self.sudoku.variables}
+        self.original_assignment = {variable: variable.domain[0] for variable in self.sudoku.variables if len(variable.domain) == 1}
 
-    def revise_domains(self, X, Y):
+    def solve(self):
+        """Call Your Big Bad Boy Solving Algorithms Here."""
+        self.arc3()
+        return self.backtrack()
+
+    def revise_domains(self, (X, Y)):
         """Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True."""
 
         raise NotImplementedError
 
-    def ac3(self, arcs=None):
+    def arc3(self):
         """Maintain a queue of all arcs in puzzle (or arcs that need checking). As long as the queue is not empty, remove (X,Y) from the queue and run Revise().
 
         If revise is true, check to see if the domain of X is 0. If so return false because it's not possible to solve the problem. Otherwise, add every arc including X (aside from the one we just checked) to the queue.
 
-        If revise is false, move to the next item in the queue.
+        If revise is false (or after the above), move to the next item in the queue.
 
         If the queue is empty, return true.
         """
 
-    def backtrack(self, assignment):
-        """Takes an assignment as an arguement. If the assignment contains every single variable in the problem, then it returns the assignment. Otherwise...
+        queue = self.sudoku.arcs
+        print(queue)
+        while queue:
+            arc_to_check = queue.pop()
+            if revise(arc_to_check):
+                if domain(arc_to_check[0]) == 0:
+                    return false
+                queue.add()
+        return true
+
+
+    def backtrack(self, assignment=None):
+        """Takes an assignment as an arguement. To start the assignment will be the origin mapping of the pre-set variables (specify this). Later it will be the assignment that the algorithm determines. If the assignment contains every single variable in the problem, then it returns the assignment. Otherwise...
 
         Choose a **random unassigned variable, then it'll iteratively check every value in the domain of the variable to see if the value is arc consistent with the current assignment. If it is, then {variable= value} is added to the assignment dictionary. Then call backtrack on that assignment. If the result was not failure, then return the result assignment. Otherwise, remove {variable=value} from the assignment and try the next value in the variable's domain.
 
@@ -52,6 +69,8 @@ def main():
 
     # initialize sudoku board and variables
     sudoku = Sudoku(puzzle_file)
+    manager = PuzzleManager(sudoku)
+    manager.solve()
 
 if __name__ == "__main__":
     main()

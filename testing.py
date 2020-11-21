@@ -24,6 +24,9 @@ def define_block():
                 for w2 in range(3):
                     block.append((h+h2,w+w2))
             blocks.append(block)
+            print(block)
+            for value in block:
+                print(value)
             #for value in block:
                 #print(a[value[0]][value[1]], end=", ")
             #print()
@@ -33,4 +36,47 @@ def optional_arguements(domain=None):
     domain = [domain] if domain else [i for i in range(1,10)]
     print(domain)
 
-optional_arguements(3)
+def define_arcs(self):
+    """Deprecated version...explanation: This is a wonderful setup I had created in the beginning so that all of the pairings would be unique and if (x,y) is present (y,x) will not be. However the way I have set up the other algorithms in PuzzleManager demains that an arc only points one way. Aka saying that X is connected to Y not that PLUS Y is connected to X. When queueing arcs to revise/check if only (x,y) is in the queue, but (y,x) is not, then we will only ever check that all of X's domain is consistent with at least something in Y's, but not vice versa.
+
+    Sets self.arcs as a list/set??? of all the arcs contained in the problems.
+    1. Each number 1-9 can only appear once in each row, column and block
+    """
+    # arcs is a set to eliminate duplicate values // print it out with this and see
+    # I will initialize this as a set because I don't need duplicate values
+    arcs = set()
+    for block in self.blocks:
+        if block == self.blocks[0]:
+            new_arcs = list(combinations(block, 2))
+            for item in new_arcs:
+                arcs.add(item)
+
+    # mark arcs for all variables in the same row
+    # we could essentially add both width and height by duplicating line 75 and changing it a bit
+    for row in range(self.height):
+        if row == 0:
+            row_items = list((row, w) for w in range(self.width))
+            new_arcs = list(combinations(row_items, 2))
+            for item in new_arcs:
+                arcs.add(item)
+
+    # mark arcs for all variables in same column
+    for column in range(self.width):
+        if column == 0:
+            column_items = list((h, column) for h in range(self.height))
+            print(column_items)
+            print()
+            new_arcs = list(combinations(row_items, 2))
+            for item in new_arcs:
+                arcs.add(item)
+    print(arcs)
+
+def arc3():
+    """Testing to see if 'while queue' works"""
+    queue = {1,2}
+
+    while queue:
+        print(queue)
+        queue.pop()
+
+arc3()

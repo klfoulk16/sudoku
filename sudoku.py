@@ -1,3 +1,4 @@
+from itertools import combinations
 
 class Sudoku():
 
@@ -6,6 +7,7 @@ class Sudoku():
         self.width = 9
         self.height = 9
         self.blocks = self.define_blocks()
+        self.arcs = self.define_arcs()
 
         # get contents from puzzle file
         with open(puzzle_file) as f:
@@ -30,6 +32,9 @@ class Sudoku():
                     self.variables.add(Variable(h, w, self.identify_block(h, w), contents[h][w]))
             self.structure.append(row)
 
+    def __str__(self):
+        return "Hi I'm a sudoku puzzle, nice to meet you!"
+
     def define_blocks(self):
         """Identify coordinates contained in each 3x3 block"""
         blocks = []
@@ -48,11 +53,31 @@ class Sudoku():
             if (h, w) in self.blocks[i]:
                 return i
 
-    def arcs(self):
+    def define_arcs(self):
         """Sets self.arcs as a list/set??? of all the arcs contained in the problems.
         1. Each number 1-9 can only appear once in each row, column and block
         """
-        raise NotImplementedError
+        # I will initialize this as a set because I don't need duplicate values
+        arcs = set()
+        # mark arcs between all variables within a block
+        for block in self.blocks:
+            new_arcs = list(combinations(block, 2))
+            for item in new_arcs:
+                arcs.add(item)
+        # mark arcs for all variables in the same row
+        # we could essentially add both width and height by duplicating line 75 and changing it a bit
+        for row in range(self.height):
+            row_items = list((row, w) for w in range(self.width))
+            new_arcs = list(combinations(row_items, 2))
+            for item in new_arcs:
+                arcs.add(item)
+        # mark arcs for all variables in same column
+        for column in range(self.width):
+            column_items = list((h, column) for h in range(self.height))
+            new_arcs = list(combinations(row_items, 2))
+            for item in new_arcs:
+                arcs.add(item)
+        return arcs
 
 class Variable():
     def __init__(self, h, w, block, domain=None):
@@ -62,4 +87,7 @@ class Variable():
         self.domain = [domain] if domain else [i for i in range(1,10)]
 
     def __str__(self):
-        return 'Variable(h='+self.h+', w='+self.w+', block='+self.block+', value='+self.value+')'
+        return f'Variable(h={self.h}, w={self.w}, block={self.block}, domain={self.domain})'
+
+    def __repr__(self):
+        return f"Variable(h={self.h}, w={self.w})"
