@@ -26,6 +26,15 @@ class Sudoku():
         # I'd need to set a value for each variable.
         self.variables = set()
         structure = []
+        self.rows = {
+            row: []
+            for row in range(self.height)
+            }
+        self.columns = {
+            column: []
+            for column in range(self.width)
+            }
+        self.rows[0].append(1)
         for h in range(self.height):
             row = []
             for w in range(self.width):
@@ -33,10 +42,14 @@ class Sudoku():
                     var = Variable(h, w)
                     row.append(var)
                     self.variables.add(var)
+                    self.rows[h].append(var)
+                    self.columns[w].append(var)
                 else:
                     var = Variable(h, w, contents[h][w])
                     row.append(var)
                     self.variables.add(var)
+                    self.rows[h].append(var)
+                    self.columns[w].append(var)
             structure.append(row)
         return structure
 
