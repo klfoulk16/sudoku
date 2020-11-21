@@ -22,7 +22,9 @@ class PuzzleManager():
     def backtrack(self, assignment=None):
         """Takes an assignment as an arguement. To start the assignment will be the origin mapping of the pre-set variables (specify this). Later it will be the assignment that the algorithm determines. If the assignment contains every single variable in the problem, then it returns the assignment. Otherwise...
 
-        Choose a **random unassigned variable, then it'll iteratively check every value in the domain of the variable to see if the value is arc consistent with the current assignment. If it is, then {variable= value} is added to the assignment dictionary. Then call backtrack on that assignment. If the result was not failure, then return the result assignment. Otherwise, remove {variable=value} from the assignment and try the next value in the variable's domain.
+        If the assignment is complete, return assignment.
+
+        Else, Choose a **random unassigned variable, then it'll iteratively check every value in the domain of the variable to see if the value is arc consistent with the current assignment. If it is, then {variable= value} is added to the assignment dictionary. Then call backtrack on that assignment. If the result was not failure, then return the result assignment. Otherwise, remove {variable=value} from the assignment and try the next value in the variable's domain.
 
         If we reach the end of the values in the variable's domain return failure. Thus we will back up a step in the backtracking heirarchy because some earlier assignment is causing issues.
         """
@@ -30,11 +32,14 @@ class PuzzleManager():
         if not assignment:
             assignment = self.original_assignment
 
+        if self.assignment_complete(assignment):
+            return assignment
+
         var = self.choose_unassigned_variable(assignment)
         for value in var.domain:
-            if self.check_arc_consistency(assignment, var):
+            if self.check_arc_consistency(assignment):
                 assignment[var] = value
-                if backtrack(assignment):
+                if self.backtrack(assignment):
                     return assignment
                 else:
                     del assignment[var]
@@ -47,11 +52,44 @@ class PuzzleManager():
             if var not in assignment.keys():
                 return var
 
-    def check_arc_consistency(self, assignment, var):
+    def check_arc_consistency(self, assignment):
         """For any given assignment check to see if all the values are arc-consistent with each other.
 
         This is necessary. If we called arc3 instead of this, we would be removing numbers from each variable's domain with each backtrack call, which would cause a problem if we had to "un"backtrack. The numbers wouldn't be readded and the domain would be inaccurate."""
         # see if all blocks, rows and columns do not have duplicates
+        for block in self.sudoku.blocks:
+            values = []
+            for var in block:
+                if var in assignment.keys():
+                    if assignment[var] in values:
+                        return False
+                    else:
+                        values.append(assignment[var])
+        for row in self.sudoku.rows:
+            values = []
+            for var in self.sudoku.rows[row]:
+                if var in assignment.keys():
+                    if assignment[var] in values:
+                        return False
+                    else:
+                        values.append(assignment[var])
+        for column in self.sudoku.columns:
+            values = []
+            for var in self.sudoku.columns[column]:
+                if var in assignment.keys():
+                    if assignment[var] in values:
+                        return False
+                    else:
+                        values.append(assignment[var])
+        return True
+
+    def assignment_complete(self, assignment):
+        """Checks to see if the assignment is complete."""
+
+        if len(assignment) == len(self.sudoku.variables):
+            return True
+        else:
+            return False
 
     def depricated_revise_domains(self, x, y):
         """DEPRECATED Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True.
@@ -102,7 +140,12 @@ def main():
     # initialize sudoku board and variables
     sudoku = Sudoku(puzzle_file)
     manager = PuzzleManager(sudoku)
-    manager.solve()
+    assignment = manager.solve()
+
+    if assignment:
+        print("Everything worked and we found a solution.")
+    else:
+        print("Something went wrong.")
 
 if __name__ == "__main__":
     main()
