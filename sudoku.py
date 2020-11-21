@@ -26,6 +26,7 @@ class Sudoku():
         # I'd need to set a value for each variable.
         self.variables = set()
         structure = []
+        # should these be a list? Could be easier? Or would that make the original insertion harder?
         self.rows = {
             row: []
             for row in range(self.height)
