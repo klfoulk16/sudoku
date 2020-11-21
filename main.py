@@ -9,32 +9,53 @@ class PuzzleManager():
 
     def solve(self):
         """Call Your Big Bad Boy Solving Algorithms Here."""
-        self.arc3()
+        self.revise_domains()
         return self.backtrack()
 
-    def revise_domains(self, (X, Y)):
-        """Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True."""
+    def revise_domains(self):
+        """Instead of a big Arc3 algorithm with the revise function, we can just go through the list of variables that have been preassigned and remove those numbers from all of the unassigned variable's domains."""
+
+        for var in self.original_assignment:
+            for var2 in self.sudoku.neighbors[var]:
+                if self.original_assignment[var] in var2.domain:
+                    var2.domain.remove(self.original_assignment[var])
+
+    def depricated_revise_domains(self, x, y):
+        """DEPRECATED Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True.
+
+        Basically if there's a variable that has only one value, remove that value from it's arcs.
+        """
+
+        if len(x.domain) == 1:
+            if x.domain[0] in y.domain:
+                y.domain.remove(x.domain[0])
 
         raise NotImplementedError
 
     def arc3(self):
-        """Maintain a queue of all arcs in puzzle (or arcs that need checking). As long as the queue is not empty, remove (X,Y) from the queue and run Revise().
+        """DEPRECATED Maintain a queue of all arcs in puzzle (or arcs that need checking). As long as the queue is not empty, remove (X,Y) from the queue and run Revise().
 
         If revise is true, check to see if the domain of X is 0. If so return false because it's not possible to solve the problem. Otherwise, add every arc including X (aside from the one we just checked) to the queue.
 
         If revise is false (or after the above), move to the next item in the queue.
 
         If the queue is empty, return true.
+
+        Unlike in the crossword generator, we are going to check both X and Y in the revise, not just X. So we will add arcs attached to both X and Y. We will also see if either X or Y's domain is 0 not just X's.
         """
 
         queue = self.sudoku.arcs
-        print(queue)
         while queue:
-            arc_to_check = queue.pop()
-            if revise(arc_to_check):
-                if domain(arc_to_check[0]) == 0:
+            (x, y) = queue.pop()
+            if self.depricated_revise_domains(x, y):
+                if x.domain == 0:
                     return false
-                queue.add()
+                #queue.add()
+            if self.depricated_revise_domains(y, x):
+                if y.domain == 0:
+                    return false
+                #queue.add()
+        raise NotImplementedError
         return true
 
 
