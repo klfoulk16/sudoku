@@ -1,3 +1,4 @@
+import itertools
 
 def define_block():
     """Used this to figure out how to divide up sudoku grid into 3x3 blocks"""
@@ -12,6 +13,7 @@ def define_block():
               [2, 8, 7, 4, 1, 9, 6, 3, 5],
               [3, 4, 5, 2, 8, 6, 1, 7, 9],
             ]
+
     #blocks = []
     #for i in range(0, 9, 3):
         #for j in range(0, 9, 3):
@@ -79,4 +81,30 @@ def arc3():
         print(queue)
         queue.pop()
 
-arc3()
+def testing_intertools_with_replacement():
+    test_list = [0, 1, 2, 3]
+
+    result = list(itertools.combinations_with_replacement(test_list, 2))
+    print(result)
+
+def pairs():
+    test_list = [0, 1, 2, 3]
+    result = set()
+
+    for var1 in test_list:
+        for var2 in test_list:
+            if var1 != var2:
+                result.add((var1, var2))
+    print(result)
+
+def revise():
+    x = [0, 1, 2]
+    y = [2, 3, 4]
+
+    for value in y:
+        if value in x:
+            x.remove(value)
+
+    print(x)
+
+revise()
