@@ -35,7 +35,6 @@ class Sudoku():
             column: []
             for column in range(self.width)
             }
-        self.rows[0].append(1)
         for h in range(self.height):
             row = []
             for w in range(self.width):
@@ -126,7 +125,7 @@ class Variable():
     def __init__(self, h, w, domain=None):
         self.h = h
         self.w = w
-        self.domain = [domain] if domain else [i for i in range(1,10)]
+        self.domain = [domain] if domain else [str(i) for i in range(1,10)]
 
     def __str__(self):
         return f'Variable(h={self.h}, w={self.w}, domain={self.domain})'

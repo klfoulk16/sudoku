@@ -107,4 +107,8 @@ def revise():
 
     print(x)
 
-revise()
+def integer():
+    i = 9
+    print(i%3)
+
+integer()
