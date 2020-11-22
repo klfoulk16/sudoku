@@ -91,6 +91,67 @@ class PuzzleManager():
         else:
             return False
 
+    def grid(self, assignment):
+        """Returns a 2d grid of the current assignment."""
+        #grid = [[] for row in range(11)]
+        grid = []
+        for row in self.sudoku.rows:
+            new_row = []
+            if row == 3 or row == 6:
+                grid.append(["border" for _ in range(11)])
+            for i in range(9):
+                if i == 3 or i == 6:
+                    new_row.append("border")
+                if self.sudoku.rows[row][i] in assignment.keys():
+                    new_row.append(assignment[self.sudoku.rows[row][i]])
+                else:
+                    new_row.append(None)
+            grid.append(new_row)
+        return grid
+
+    def print_img(self, assignment):
+        """Prints crossword out as an image."""
+        from PIL import Image, ImageDraw, ImageFont
+
+        cell_size = 100
+        cell_border = 2
+        divider = 2
+        interior_size = cell_size - 2 * cell_border
+        grid = self.grid(assignment)
+        # Create a blank canvas.
+        img = Image.new(
+            "RGBA",
+            (self.sudoku.width * cell_size + 200,
+             self.sudoku.height * cell_size + 200),
+            "black"
+        )
+        font = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 80)
+        draw = ImageDraw.Draw(img)
+
+        for i in range(11):
+            for j in range(11):
+                #print(grid[i])
+                rect = [
+                    (j * cell_size + cell_border,
+                     i * cell_size + cell_border),
+                    ((j + 1) * cell_size - cell_border,
+                     (i + 1) * cell_size - cell_border)
+                ]
+                if not grid[i][j] or grid[i][j] != "border":
+                    #print(grid[i][j])
+                    draw.rectangle(rect, fill="white")
+                    if grid[i][j]:
+                        w, h = draw.textsize(grid[i][j], font=font)
+                        draw.text(
+                            (rect[0][0] + ((interior_size - w) / 2),
+                             rect[0][1] + ((interior_size - h) / 2) - 10),
+                            grid[i][j], fill="black", font=font
+                        )
+                else:
+                    draw.rectangle(rect, fill="black")
+
+        img.show()
+
     def depricated_revise_domains(self, x, y):
         """DEPRECATED Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True.
 
@@ -140,10 +201,12 @@ def main():
     # initialize sudoku board and variables
     sudoku = Sudoku(puzzle_file)
     manager = PuzzleManager(sudoku)
+    manager.print_img(manager.original_assignment)
     assignment = manager.solve()
 
     if assignment:
         print("Everything worked and we found a solution.")
+        manager.print_img(assignment)
     else:
         print("Something went wrong.")
 
