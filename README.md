@@ -1,7 +1,8 @@
 To use:
 
 1. Download these lovely files.
-2. If you'd like to print out your solved sudoku puzzles, run pip install -r requirements.txt
+2. If you'd like to print out your solved sudoku puzzles,
+run pip install -r requirements.txt
     i. Otherwise, comment out lines 208 and 213 in driver.py
 3. Run python3 driver.py puzzles/puzzle1.txt in your terminal to solve puzzle1.txt
     i. Rough images of the solved and unsolved puzzle will appear.
