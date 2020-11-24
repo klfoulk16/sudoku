@@ -4,7 +4,11 @@ from sudoku import *
 class PuzzleManager():
     def __init__(self, sudoku):
         self.sudoku = sudoku
-        self.original_assignment = {variable: variable.domain[0] for variable in self.sudoku.variables if len(variable.domain) == 1}
+        self.original_assignment = {
+                variable: variable.domain[0]
+                for variable in self.sudoku.variables
+                if len(variable.domain) == 1
+            }
 
     def solve(self):
         """Call Your Big Bad Boy Solving Algorithms Here."""
@@ -152,44 +156,6 @@ class PuzzleManager():
 
         img.show()
 
-    def depricated_revise_domains(self, x, y):
-        """DEPRECATED Revise X's domain to enforce arc consistency between X and Y. For each value in X's domain, check to see if there is a variable in Y's domain that satisfies constraint (X,Y). If not remove variable. If no variables were removed from X's domain return False, else return True.
-
-        Basically if there's a variable that has only one value, remove that value from it's arcs.
-        """
-
-        if len(x.domain) == 1:
-            if x.domain[0] in y.domain:
-                y.domain.remove(x.domain[0])
-
-        raise NotImplementedError
-
-    def depricated_arc3(self):
-        """DEPRECATED Maintain a queue of all arcs in puzzle (or arcs that need checking). As long as the queue is not empty, remove (X,Y) from the queue and run Revise().
-
-        If revise is true, check to see if the domain of X is 0. If so return false because it's not possible to solve the problem. Otherwise, add every arc including X (aside from the one we just checked) to the queue.
-
-        If revise is false (or after the above), move to the next item in the queue.
-
-        If the queue is empty, return true.
-
-        Unlike in the crossword generator, we are going to check both X and Y in the revise, not just X. So we will add arcs attached to both X and Y. We will also see if either X or Y's domain is 0 not just X's.
-        """
-
-        queue = self.sudoku.arcs
-        while queue:
-            (x, y) = queue.pop()
-            if self.depricated_revise_domains(x, y):
-                if x.domain == 0:
-                    return false
-                #queue.add()
-            if self.depricated_revise_domains(y, x):
-                if y.domain == 0:
-                    return false
-                #queue.add()
-        raise NotImplementedError
-        return true
-
 def main():
     # check usage
     if len(sys.argv) != 2:
@@ -201,14 +167,21 @@ def main():
     # initialize sudoku board and variables
     sudoku = Sudoku(puzzle_file)
     manager = PuzzleManager(sudoku)
-    manager.print_img(manager.original_assignment)
+    # print out the initial
+    #manager.print_img(manager.original_assignment)
     assignment = manager.solve()
 
     if assignment:
         print("Everything worked and we found a solution.")
-        manager.print_img(assignment)
+        #manager.print_img(assignment)
     else:
         print("Something went wrong.")
 
 if __name__ == "__main__":
+    import cProfile, pstats
+    profiler = cProfile.Profile()
+    profiler.enable()
     main()
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats('cumtime')
+    stats.print_stats()

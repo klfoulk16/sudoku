@@ -7,7 +7,14 @@ Goals for the project:
 
 Broad Steps:
 
-Step 1: 20 hours (4 days, 5 hours) 4.25, 5:45 start
+Step 1: 20 hours (4 days, 5 hours). Initial version took 10 hours or so. No heuristic.
+Step 2: Took 2 hours to figure out how to print a crappy image with dividers.
+Step 3 (added):
+3. Use cprofile to analyze how quick code is. Refactor it and make it efficient.
+Make sure it follows style guidelines.
+
+
+Original Plan:
 1. Given an array that represents a sudoku puzzle, return the solved array.
     i. At this step I will be hard coding the puzzle.
     i. How to describe the problem in an array? Or multiple arrays?

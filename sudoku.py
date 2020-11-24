@@ -1,4 +1,5 @@
 from itertools import combinations
+import time
 
 class Sudoku():
 
