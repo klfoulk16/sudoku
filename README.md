@@ -3,7 +3,7 @@ To use:
 1. Download these lovely files.
 2. If you'd like to print out your solved sudoku puzzles, run pip install -r requirements.txt
 3. Run python3 driver.py puzzles/puzzle1.txt in your terminal to solve puzzle1.txt
-    i. A rough image of the solved and unsolved puzzle will appear.
+    i. Rough images of the solved and unsolved puzzle will appear.
 4. If you want to see the breakdown of how long each function and line of code
 takes, modify the if __name__ == "__main__": to run test() instead of main().
 
