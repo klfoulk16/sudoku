@@ -2,7 +2,11 @@ import sys
 from sudoku import *
 
 class PuzzleManager():
+
     def __init__(self, sudoku):
+        """
+        Create new CSP Sudoku generate.
+        """
         self.sudoku = sudoku
         self.original_assignment = {
                 variable: variable.domain[0]
@@ -11,28 +15,46 @@ class PuzzleManager():
             }
 
     def solve(self):
-        """Call Your Big Bad Boy Solving Algorithms Here."""
+        """
+        Calls the bad boy solving algorithms.
+        Returns a completed assignment if there is one. Otherwise returns None.
+        """
         self.revise_domains()
         return self.backtrack()
 
     def revise_domains(self):
-        """Instead of a big Arc3 algorithm with the revise function, we can just go through the list of variables that have been preassigned and remove those numbers from all of the unassigned variable's domains."""
+        """
+        Update the domain of each variable so that binary constraints are satisfied.
+        Remove values from `var.domains` for which there is no possible
+        corresponding value for `y` in `var2.domains' for each var2 in
+        var's neighbors.
 
+        Aka. For each variable that has a predefined value, remove said's value
+        from each of its neighbors' domains.
+        """
         for var in self.original_assignment:
             for var2 in self.sudoku.neighbors[var]:
                 if self.original_assignment[var] in var2.domain:
                     var2.domain.remove(self.original_assignment[var])
 
     def backtrack(self, assignment=None):
-        """Takes an assignment as an arguement. To start the assignment will be the origin mapping of the pre-set variables (specify this). Later it will be the assignment that the algorithm determines. If the assignment contains every single variable in the problem, then it returns the assignment. Otherwise...
+        """Takes an assignment as an arguement. If no assignmet is give, the
+        original mapping of the pre-set variables (specify this) will be used.
+        If the assignment contains every single variable in the problem,
+        then it returns the completed assignment.
 
-        If the assignment is complete, return assignment.
+        Otherwise...Choose a random unassigned variable, check the first value
+        in the domain of the variable to see if the value is arc consistent with
+        the current assignment. If it is, then {variable= value} is added to the
+        assignment dictionary. Then call backtrack on that assignment. If the
+        result was not failure, then return the result assignment.
+        Otherwise, remove {variable=value} from the assignment and try the next
+        value in the variable's domain.
 
-        Else, Choose a **random unassigned variable, then it'll iteratively check every value in the domain of the variable to see if the value is arc consistent with the current assignment. If it is, then {variable= value} is added to the assignment dictionary. Then call backtrack on that assignment. If the result was not failure, then return the result assignment. Otherwise, remove {variable=value} from the assignment and try the next value in the variable's domain.
-
-        If we reach the end of the values in the variable's domain return failure. Thus we will back up a step in the backtracking heirarchy because some earlier assignment is causing issues.
+        If we reach the end of the values in the variable's domain return failure.
+        Thus we will back up a step in the backtracking heirarchy because some
+        earlier assignment is causing issues.
         """
-
         if not assignment:
             assignment = self.original_assignment
 
@@ -50,17 +72,19 @@ class PuzzleManager():
         return None
 
     def choose_unassigned_variable(self, assignment):
-        """For now this will just return a random variable. Eventually we will use a heuristic to return the hopefully best variable to check given the current assignment."""
-
+        """For now this will just return a random variable. Eventually we will
+        use a heuristic to return the hopefully best variable to check given the
+        current assignment."""
         for var in self.sudoku.variables:
             if var not in assignment.keys():
                 return var
 
     def check_arc_consistency(self, assignment):
-        """For any given assignment check to see if all the values are arc-consistent with each other.
-
-        This is necessary. If we called arc3 instead of this, we would be removing numbers from each variable's domain with each backtrack call, which would cause a problem if we had to "un"backtrack. The numbers wouldn't be readded and the domain would be inaccurate."""
-        # see if all blocks, rows and columns do not have duplicates
+        """For any given assignment check to see if all the values are
+        arc-consistent with each other. Aka ensure all blocks, rows and columns
+        do not have duplicate values. Returns False if they do, otherwise returns
+        True.
+        """
         for block in self.sudoku.blocks:
             values = []
             for var in block:
@@ -89,14 +113,13 @@ class PuzzleManager():
 
     def assignment_complete(self, assignment):
         """Checks to see if the assignment is complete."""
-
         if len(assignment) == len(self.sudoku.variables):
             return True
         else:
             return False
 
     def grid(self, assignment):
-        """Returns a 2d grid of the current assignment."""
+        """Returns a 2d grid of the current assignment for img."""
         grid = []
         for row in self.sudoku.rows:
             new_row = []
@@ -157,6 +180,10 @@ class PuzzleManager():
 
 
 def test():
+    """
+    Shows which functions are taking the most time. Used to compare efficiency
+    as I refactor the code.
+    """
     import cProfile, pstats
     profiler = cProfile.Profile()
     profiler.enable()
@@ -164,6 +191,7 @@ def test():
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')
     stats.print_stats()
+
 
 def main():
     # check usage
@@ -176,15 +204,15 @@ def main():
     # initialize sudoku board and variables
     sudoku = Sudoku(puzzle_file)
     manager = PuzzleManager(sudoku)
-    # print out the initial
+    # print out the initial board
     #manager.print_img(manager.original_assignment)
     assignment = manager.solve()
 
     if assignment:
-        print("Everything worked and we found a solution.")
+        print("We found a solution.")
         #manager.print_img(assignment)
     else:
-        print("Something went wrong.")
+        print("The puzzle is unsolvable.")
 
 if __name__ == "__main__":
-    test()
+    main()
