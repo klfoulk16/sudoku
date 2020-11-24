@@ -5,72 +5,70 @@ class Sudoku():
 
     def __init__(self, puzzle_file):
 
+        with open(puzzle_file) as f:
+            contents = f.read().splitlines()
+        self.check_dimensions(contents)
         self.width = 9
         self.height = 9
-        self.structure = self.define_structure(puzzle_file)
-        self.blocks = self.define_blocks()
+        # define self.variables, self.rows, self.columns, self.blocks
+        self.define_variables(contents)
         self.arcs = self.define_arcs()
 
     def __str__(self):
         return "Hi I'm a sudoku puzzle, nice to meet you!"
 
-    def define_structure(self, puzzle_file):
-        # get contents from puzzle file
-        with open(puzzle_file) as f:
-            contents = f.read().splitlines()
-        # could check to make sure that it's a 9x9 grid???
+    def check_dimensions(self, contents):
+        if len(contents) != 9:
+            raise ValueError("The sudoku puzzle should be a 9x9 grid.")
+        for row in contents:
+            if len(row) != 9:
+                raise ValueError("The sudoku puzzle should be a 9x9 grid.")
 
-        # initialize structure and variables
-        # structure has None for variables and value for pre-set numbers
-        # I think eventually I can make the "structure" just have the variable at
-        # each point vs initializing it with none or value. then set variable to return it's value if called.
-        # I'd need to set a value for each variable.
+    def define_variables(self, contents):
+        """Initializes the set of variables contained in the puzzle. Also categorizes them into rows, columns and blocks so that we can easily identify arcs."""
+
         self.variables = set()
-        structure = []
-        # should these be a list? Could be easier? Or would that make the original insertion harder?
-        self.rows = {
-            row: []
-            for row in range(self.height)
-            }
-        self.columns = {
-            column: []
-            for column in range(self.width)
-            }
-        for h in range(self.height):
-            row = []
-            for w in range(self.width):
-                if contents[h][w] == "_":
-                    var = Variable(h, w)
-                    row.append(var)
-                    self.variables.add(var)
-                    self.rows[h].append(var)
-                    self.columns[w].append(var)
-                else:
-                    var = Variable(h, w, contents[h][w])
-                    row.append(var)
-                    self.variables.add(var)
-                    self.rows[h].append(var)
-                    self.columns[w].append(var)
-            structure.append(row)
-        return structure
+        self.rows = [[] for _ in range(self.height)]
+        self.columns = [[] for _ in range(self.width)]
+        self.blocks = [[] for _ in range(9)]
 
-    def define_blocks(self):
-        """Identify variables contained in each 3x3 block"""
+        block_map = self.define_block_map()
+        for row in range(self.height):
+            for column in range(self.width):
+                block = self.identify_block(row, column, block_map)
+                if contents[row][column] == "_":
+                    var = Variable(row, column, block)
+                    self.variables.add(var)
+                    self.rows[row].append(var)
+                    self.columns[column].append(var)
+                    self.blocks[block].append(var)
+                else:
+                    var = Variable(row, column, block, contents[row][column])
+                    self.variables.add(var)
+                    self.rows[row].append(var)
+                    self.columns[column].append(var)
+                    self.blocks[block].append(var)
+
+
+    def define_block_map(self):
+        """Maps out which array coordinates are part of which block."""
         blocks = []
         for h in range(0, 9, 3):
             for w in range(0, 9, 3):
                 block = []
                 for h2 in range(3):
                     for w2 in range(3):
-                        block.append(self.structure[h+h2][w+w2])
+                        block.append((h+h2, w+w2))
                 blocks.append(block)
         return blocks
 
-    def identify_block(self, variable):
-        """Identify which block a set of coordinates is part of"""
-        for i in range(len(self.blocks)):
-            if variable in self.blocks[i]:
-                return self.blocks[i]
+    def identify_block(self, row, column, block_map):
+        """Figures out which block a pair of coordinates is in"""
+        for i in range(9):
+            if (row, column) in block_map[i]:
+                return i
+        else:
+            raise ValueError("This coordinate pair is not in a block.")
 
     def define_arcs(self):
         """What if for each variable, we created a dictionary that contains all of the neighbors for that variable."""
@@ -78,58 +76,29 @@ class Sudoku():
         self.neighbors = dict()
         for var in self.variables:
             neighbors = set()
-            # add all of the variables that are in that variable's row and column
-            for w in range(self.width):
-                if self.structure[var.h][w] != var:
-                    neighbors.add(self.structure[var.h][w])
             # add all of the variables that are in that variable's column
-            for h in range(self.height):
-                if self.structure[h][var.w] != var:
-                    neighbors.add(self.structure[h][var.w])
+            for var2 in self.columns[var.column]:
+                if var2 != var:
+                    neighbors.add(var2)
+            # add all of the variables that are in that variable's row
+            for var2 in self.rows[var.row]:
+                if var2 != var:
+                    neighbors.add(var2)
             # """ block
-            for var2 in self.identify_block(var):
-                if var != var2:
+            for var2 in self.blocks[var.block]:
+                if var2 != var:
                     neighbors.add(var2)
             self.neighbors[var] = neighbors
 
-    def depricated_define_arcs(self):
-        """Sets self.arcs as a list/set??? of all the arcs contained in the problems.
-        1. Each number 1-9 can only appear once in each row, column and block
-        """
-
-        # I will initialize this as a set because I don't need duplicate values
-        arcs = set()
-        # mark arcs between all variables within a block
-        for block in self.blocks:
-            new_arcs = list(combinations(block, 2))
-            for item in new_arcs:
-                arcs.add(item)
-        # mark arcs for all variables in the same row
-        # we could essentially add both width and height by duplicating line 75 and changing it a bit
-        for row in range(self.height):
-            row_items = list(self.structure[row][w] for w in range(self.width))
-            new_arcs = list(combinations(row_items, 2))
-            for item in new_arcs:
-                arcs.add(item)
-        # mark arcs for all variables in same column
-        for column in range(self.width):
-            column_items = list(self.structure[h][column]for h in range(self.height))
-            new_arcs = list(combinations(row_items, 2))
-            for item in new_arcs:
-                arcs.add(item)
-        return arcs
-
-    def neighbors_for_variable(self):
-        """Returns all of the neighbors for a variable"""
-
 class Variable():
-    def __init__(self, h, w, domain=None):
-        self.h = h
-        self.w = w
+    def __init__(self, row, column, block, domain=None):
+        self.row = row
+        self.column = column
+        self.block = block
         self.domain = [domain] if domain else [str(i) for i in range(1,10)]
 
     def __str__(self):
-        return f'Variable(h={self.h}, w={self.w}, domain={self.domain})'
+        return f'Variable(row={self.row}, column={self.column}, block={self.block}, domain={self.domain})'
 
     def __repr__(self):
-        return f"Variable(h={self.h}, w={self.w})"
+        return f"Variable(row={self.row}, column={self.column})"
