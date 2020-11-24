@@ -168,7 +168,7 @@ def test():
 def main():
     # check usage
     if len(sys.argv) != 2:
-        sys.exit("Usage: python3 sudoku.py puzzle_file")
+        sys.exit("Usage: python3 driver.py puzzles/puzzle_file")
 
     # parse sys args
     puzzle_file = sys.argv[1]
