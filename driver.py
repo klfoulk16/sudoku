@@ -121,7 +121,7 @@ class PuzzleManager():
     def grid(self, assignment):
         """Returns a 2d grid of the current assignment for img."""
         grid = []
-        for row in self.sudoku.rows:
+        for row in range(len(self.sudoku.rows)):
             new_row = []
             if row == 3 or row == 6:
                 grid.append(["border" for _ in range(11)])
@@ -205,12 +205,12 @@ def main():
     sudoku = Sudoku(puzzle_file)
     manager = PuzzleManager(sudoku)
     # print out the initial board
-    #manager.print_img(manager.original_assignment)
+    manager.print_img(manager.original_assignment)
     assignment = manager.solve()
 
     if assignment:
         print("We found a solution.")
-        #manager.print_img(assignment)
+        manager.print_img(assignment)
     else:
         print("The puzzle is unsolvable.")
 
