@@ -71,7 +71,7 @@ class PuzzleManager():
                         values.append(assignment[var])
         for row in self.sudoku.rows:
             values = []
-            for var in self.sudoku.rows[row]:
+            for var in row:
                 if var in assignment.keys():
                     if assignment[var] in values:
                         return False
@@ -79,7 +79,7 @@ class PuzzleManager():
                         values.append(assignment[var])
         for column in self.sudoku.columns:
             values = []
-            for var in self.sudoku.columns[column]:
+            for var in column:
                 if var in assignment.keys():
                     if assignment[var] in values:
                         return False
@@ -97,7 +97,6 @@ class PuzzleManager():
 
     def grid(self, assignment):
         """Returns a 2d grid of the current assignment."""
-        #grid = [[] for row in range(11)]
         grid = []
         for row in self.sudoku.rows:
             new_row = []
@@ -156,6 +155,16 @@ class PuzzleManager():
 
         img.show()
 
+
+def test():
+    import cProfile, pstats
+    profiler = cProfile.Profile()
+    profiler.enable()
+    main()
+    profiler.disable()
+    stats = pstats.Stats(profiler).sort_stats('cumtime')
+    stats.print_stats()
+
 def main():
     # check usage
     if len(sys.argv) != 2:
@@ -178,10 +187,4 @@ def main():
         print("Something went wrong.")
 
 if __name__ == "__main__":
-    import cProfile, pstats
-    profiler = cProfile.Profile()
-    profiler.enable()
-    main()
-    profiler.disable()
-    stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    test()
