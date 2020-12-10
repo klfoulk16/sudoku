@@ -25,11 +25,11 @@ class PuzzleManager():
     def revise_domains(self):
         """
         Update the domain of each variable so that binary constraints are satisfied.
-        Remove values from `var.domains` for which there is no possible
-        corresponding value for `y` in `var2.domains' for each var2 in
+        Remove all values from `var.domains` for which there is no possible
+        corresponding value for `y` in `var2.domains'. Do this for each 'var2' in
         var's neighbors.
 
-        Aka. For each variable that has a predefined value, remove said's value
+        Aka. For each variable that has a predefined value, remove said value
         from each of its neighbors' domains.
         """
         for var in self.original_assignment:
@@ -38,9 +38,11 @@ class PuzzleManager():
                     var2.domain.remove(self.original_assignment[var])
 
     def backtrack(self, assignment=None):
-        """Takes an assignment as an arguement. If no assignmet is give, the
-        original mapping of the pre-set variables (specify this) will be used.
-        If the assignment contains every single variable in the problem,
+        """
+        Takes an assignment as an argument. If no assignment is given, the
+        original mapping of the pre-set variables will be used.
+
+        If the assignment contains every variable in the problem,
         then it returns the completed assignment.
 
         Otherwise...Choose a random unassigned variable, check the first value
@@ -51,8 +53,8 @@ class PuzzleManager():
         Otherwise, remove {variable=value} from the assignment and try the next
         value in the variable's domain.
 
-        If we reach the end of the values in the variable's domain return failure.
-        Thus we will back up a step in the backtracking heirarchy because some
+        If we reach the end of the values in the variable's domain, return failure.
+        Thus we will back up a step in the backtracking hierarchy because an
         earlier assignment is causing issues.
         """
         if not assignment:
@@ -72,15 +74,18 @@ class PuzzleManager():
         return None
 
     def choose_unassigned_variable(self, assignment):
-        """For now this will just return a random variable. Eventually we will
-        use a heuristic to return the hopefully best variable to check given the
-        current assignment."""
+        """
+        For now this will just return a random variable. Eventually we will
+        use a heuristic to return the *hopefully* best variable to check given the
+        current assignment.
+        """
         for var in self.sudoku.variables:
             if var not in assignment.keys():
                 return var
 
     def check_arc_consistency(self, assignment):
-        """For any given assignment check to see if all the values are
+        """
+        For any given assignment check to see if all the values are
         arc-consistent with each other. Aka ensure all blocks, rows and columns
         do not have duplicate values. Returns False if they do, otherwise returns
         True.
@@ -112,14 +117,18 @@ class PuzzleManager():
         return True
 
     def assignment_complete(self, assignment):
-        """Checks to see if the assignment is complete."""
+        """
+        Checks to see if the assignment is complete.
+        """
         if len(assignment) == len(self.sudoku.variables):
             return True
         else:
             return False
 
     def grid(self, assignment):
-        """Returns a 2d grid of the current assignment for img."""
+        """
+        Returns a 2d grid of the current assignment for img.
+        """
         grid = []
         for row in range(len(self.sudoku.rows)):
             new_row = []
@@ -136,7 +145,9 @@ class PuzzleManager():
         return grid
 
     def print_img(self, assignment):
-        """Prints crossword out as an image."""
+        """
+        Prints crossword out as an image.
+        """
         from PIL import Image, ImageDraw, ImageFont
 
         cell_size = 100

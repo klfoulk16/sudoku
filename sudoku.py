@@ -32,9 +32,6 @@ class Sudoku():
         self.define_variables(contents)
         self.neighbors = self.define_neighbors()
 
-    def __str__(self):
-        return "Hi I'm a sudoku puzzle, nice to meet you!"
-
     def check_dimensions(self, contents):
         """
         Checks to make sure the puzzle is a 9x9 grid.
