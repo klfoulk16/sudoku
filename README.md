@@ -4,23 +4,23 @@ Sudoku solver is a simple python application that takes a .txt file represetnati
 
 ## Set Up:
 
-'''bash
+```bash
 # Clone this repository
 git clone https://github.com/klfoulk16/sudoku.git
 
 # Use the package manager pip to install the requirements.
 pip install -r requirements.txt
-'''
+```
 
 ## Usage
 
-'''python
+```python
 python3 solve.py <puzzle.txt>
-'''
+```
 
 <puzzle.txt> should link to a txt file that contain's a representation of 9x9 sudoku puzzle as below. <i>The puzzle should have "_" for blank boxes and numbers for boxes that are pre-defined</i>
 
-'''txt
+```txt
 ___26_7_1
 68__7__9_
 19___45__
@@ -30,7 +30,7 @@ _5___3_28
 __93___74
 _4__5__36
 7_3_18___
-'''
+```
 
 ## Looking for feedback about:
 1. My project structure and whether it is readable/efficient.
