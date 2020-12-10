@@ -1,6 +1,7 @@
-**/__pycache__
-**/venv
+# Ignore Files I used for development and planning
+/forKelly
+
+# Ignore Mac system files
 .DS_Store
-KellyTesting.py
-plan.txt
-**/cProfile_efficiency_test_results
+
+/__pycache__
