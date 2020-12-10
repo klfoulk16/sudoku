@@ -43,13 +43,14 @@ class PuzzleManager():
         variable that satisfies the puzzle's constraints.
 
         Args:
-            assignment (dict): Dictionary containing variable:value pairs that
-                meets the constraints of the problem. If no assignment is given,
-                the original mapping of the pre-set variables will be used.
+            assignment (dict[Variable, int]): Dictionary mapping the puzzle's
+                Variable objects to ints that meet the constraints of the problem.
+                If no assignment is given, the original mapping of the pre-set
+                variables will be used.
 
         Returns:
-            dict: Returns a dictionary of variable:value pairs that meets
-                the constraints of the problem and contains one
+            dict[Variable, int]: Returns a dictionary mapping variables to ints
+                that meets the constraints of the problem and contains one
                 more pair than the dictionary passed in as an argument.
             None: Returns none if no such dictionary was found.
         """
