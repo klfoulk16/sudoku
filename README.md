@@ -14,11 +14,12 @@ pip install -r requirements.txt
 
 ## Usage
 
+Run the following command in your terminal:
 ```python
 python3 solve.py <puzzle.txt>
 ```
 
-<puzzle.txt> should link to a txt file that contain's a representation of 9x9 sudoku puzzle as below. <i>The puzzle should have "_" for blank boxes and numbers for boxes that are pre-defined</i>
+<puzzle.txt> should link to a txt file that contains a representation of 9x9 sudoku puzzle like the one below. The puzzle should have "_" for blank boxes and numbers for boxes that are pre-defined.
 
 ```txt
 ___26_7_1
@@ -36,13 +37,13 @@ _4__5__36
 1. My project structure and whether it is readable/efficient.
 2. How to make my code more pythonic.
 3. How to print out a prettier picture of the sudoku puzzles
-(the thick black borders are not attractive.)
+(the thick black borders are not attractive).
 
 This was only my second time creating a project from scratch and I know I have
 a long way to go.
 
 ## Road Map:
-1. I will generate sudoku puzzles to solve.
-2. I will finish the test.py file. I did not know about these until I was finished.
+1. I will generate sudoku puzzles to solve instead of using txt files.
+2. I will finish the test.py file so that the code is "well-tested."
 3. I will create a pygame version of this project allowing users to solve the
 puzzle and ask the AI for advice.
