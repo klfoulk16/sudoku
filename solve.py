@@ -181,7 +181,7 @@ class PuzzleManager():
 
 def test():
     """
-    Shows which functions are taking the most time. Used to compare efficiency
+    Shows which functions are taking the most time. Used to examine efficiency
     as I refactor the code.
     """
     import cProfile, pstats

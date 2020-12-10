@@ -1,3 +1,6 @@
 **/__pycache__
 **/venv
 .DS_Store
+KellyTesting.py
+plan.txt
+**/cProfile_efficiency_test_results
