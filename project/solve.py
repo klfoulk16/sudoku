@@ -1,18 +1,18 @@
 import sys
 from sudoku import *
 
-class PuzzleManager():
 
+class PuzzleManager:
     def __init__(self, sudoku):
         """
         Create new CSP Sudoku generate.
         """
         self.sudoku = sudoku
         self.original_assignment = {
-                variable: variable.domain[0]
-                for variable in self.sudoku.variables
-                if len(variable.domain) == 1
-            }
+            variable: variable.domain[0]
+            for variable in self.sudoku.variables
+            if len(variable.domain) == 1
+        }
 
     def solve(self):
         """
@@ -156,31 +156,35 @@ class PuzzleManager():
         # Create a blank canvas.
         img = Image.new(
             "RGBA",
-            (self.sudoku.width * cell_size + 200,
-             self.sudoku.height * cell_size + 200),
-            "black"
+            (self.sudoku.width * cell_size + 200, self.sudoku.height * cell_size + 200),
+            "black",
         )
         font = ImageFont.truetype("assets/fonts/OpenSans-Regular.ttf", 80)
         draw = ImageDraw.Draw(img)
 
         for i in range(11):
             for j in range(11):
-                #print(grid[i])
+                # print(grid[i])
                 rect = [
-                    (j * cell_size + cell_border,
-                     i * cell_size + cell_border),
-                    ((j + 1) * cell_size - cell_border,
-                     (i + 1) * cell_size - cell_border)
+                    (j * cell_size + cell_border, i * cell_size + cell_border),
+                    (
+                        (j + 1) * cell_size - cell_border,
+                        (i + 1) * cell_size - cell_border,
+                    ),
                 ]
                 if not grid[i][j] or grid[i][j] != "border":
-                    #print(grid[i][j])
+                    # print(grid[i][j])
                     draw.rectangle(rect, fill="white")
                     if grid[i][j]:
                         w, h = draw.textsize(grid[i][j], font=font)
                         draw.text(
-                            (rect[0][0] + ((interior_size - w) / 2),
-                             rect[0][1] + ((interior_size - h) / 2) - 10),
-                            grid[i][j], fill="black", font=font
+                            (
+                                rect[0][0] + ((interior_size - w) / 2),
+                                rect[0][1] + ((interior_size - h) / 2) - 10,
+                            ),
+                            grid[i][j],
+                            fill="black",
+                            font=font,
                         )
                 else:
                     draw.rectangle(rect, fill="black")
@@ -194,11 +198,12 @@ def test():
     as I refactor the code.
     """
     import cProfile, pstats
+
     profiler = cProfile.Profile()
     profiler.enable()
     main()
     profiler.disable()
-    stats = pstats.Stats(profiler).sort_stats('cumtime')
+    stats = pstats.Stats(profiler).sort_stats("cumtime")
     stats.print_stats()
 
 
@@ -222,6 +227,7 @@ def main():
         manager.print_img(assignment)
     else:
         print("The puzzle is unsolvable.")
+
 
 if __name__ == "__main__":
     main()

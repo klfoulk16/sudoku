@@ -1,5 +1,4 @@
-class Variable():
-
+class Variable:
     def __init__(self, row, column, block, domain=None):
         """
         Create a new variable with row, column, block and domain.
@@ -7,17 +6,16 @@ class Variable():
         self.row = row
         self.column = column
         self.block = block
-        self.domain = [domain] if domain else [str(i) for i in range(1,10)]
+        self.domain = [domain] if domain else [str(i) for i in range(1, 10)]
 
     def __str__(self):
-        return f'Variable(row={self.row}, column={self.column}, block={self.block}, domain={self.domain})'
+        return f"Variable(row={self.row}, column={self.column}, block={self.block}, domain={self.domain})"
 
     def __repr__(self):
         return f"Variable(row={self.row}, column={self.column})"
 
 
-class Sudoku():
-
+class Sudoku:
     def __init__(self, puzzle_file):
         """
         Create a new sudoku puzzle with a master set of variables and arcs,
@@ -81,7 +79,7 @@ class Sudoku():
                 block = []
                 for h2 in range(3):
                     for w2 in range(3):
-                        block.append((h+h2, w+w2))
+                        block.append((h + h2, w + w2))
                 blocks.append(block)
         return blocks
 
